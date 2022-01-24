@@ -94,8 +94,8 @@ for the SODA method and the DMControl Generalization Benchmark.
 We assume that you have access to a GPU with CUDA >=9.2 support. All dependencies can then be installed with the following commands:
 
 ```
-conda env create -f setup/conda.yml
-conda activate dmcgb
+conda env create -f setup/conda.yaml
+conda activate dmc
 sh setup/install_envs.sh
 ```
 
@@ -151,3 +151,14 @@ See [our paper](https://arxiv.org/abs/2107.00644) for additional results.
 ## Acknowledgements
 
 We would like to thank the numerous researchers and engineers involved in work of which this work is based on. This repository is a product of our work on [SVEA](https://arxiv.org/abs/2107.00644), [SODA](https://arxiv.org/abs/2011.13389) and [PAD](https://arxiv.org/abs/2007.04309). Our SAC implementation is based on [this repository](https://github.com/denisyarats/pytorch_sac_ae), the original DMControl is available [here](https://github.com/deepmind/dm_control), and the gym wrapper for it is available [here](https://github.com/denisyarats/dmc2gym). The [Distracting Control Suite](https://arxiv.org/abs/2101.02722) environments were adapted from [this](https://github.com/google-research/google-research/tree/master/distracting_control) implementation. PAD, RAD, CURL, and DrQ baselines are based on their official implementations provided [here](https://github.com/nicklashansen/policy-adaptation-during-deployment), [here](https://github.com/MishaLaskin/rad), [here](https://github.com/MishaLaskin/curl), and [here](https://github.com/denisyarats/drq), respectively.
+
+
+## Error and Workaround
+1. Cuda error: no kernel image is available for execution on the device
+Q: install torch from the correct source
+
+2. The GLFW library is not initialized
+Q: pip uninstall glfw
+
+3. mujoco license is expired 
+Q: download license [here](https://www.roboti.us/license.html)
