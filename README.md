@@ -127,6 +127,14 @@ python3 src/train.py \
   --algorithm svea \
   --seed 0
 ```
+For feature-based RL
+```
+python3 src/train.py \
+  --algorithm sac_feat \
+  --seed 0
+```
+
+
 
 to run SVEA on the default task, `walker_walk`. This should give you an output of the form:
 

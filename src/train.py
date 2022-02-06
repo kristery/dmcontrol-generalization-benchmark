@@ -40,25 +40,28 @@ def main(args):
 
 	# Initialize environments
 	gym.logger.set_level(40)
-	env = make_env(
-		domain_name=args.domain_name,
-		task_name=args.task_name,
-		seed=args.seed,
-		episode_length=args.episode_length,
-		action_repeat=args.action_repeat,
-		image_size=args.image_size,
-		mode='train'
-	)
-	test_env = make_env(
-		domain_name=args.domain_name,
-		task_name=args.task_name,
-		seed=args.seed+42,
-		episode_length=args.episode_length,
-		action_repeat=args.action_repeat,
-		image_size=args.image_size,
-		mode=args.eval_mode,
-		intensity=args.distracting_cs_intensity
-	) if args.eval_mode is not None else None
+    
+        env = make_env(
+                domain_name=args.domain_name,
+                task_name=args.task_name,
+                seed=args.seed,
+                episode_length=args.episode_length,
+                action_repeat=args.action_repeat,
+                image_size=args.image_size,
+                mode='train'
+        )
+        test_env = make_env(
+                domain_name=args.domain_name,
+                task_name=args.task_name,
+                seed=args.seed+42,
+                episode_length=args.episode_length,
+                action_repeat=args.action_repeat,
+                image_size=args.image_size,
+                mode=args.eval_mode,
+                intensity=args.distracting_cs_intensity
+        ) if args.eval_mode is not None else None
+
+
 
 	# Create working directory
 	work_dir = os.path.join(args.log_dir, args.domain_name+'_'+args.task_name, args.algorithm, str(args.seed))

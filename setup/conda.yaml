@@ -1,4 +1,4 @@
-name: dmcgb
+name: dmc
 channels:
   - defaults
 dependencies:

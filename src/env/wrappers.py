@@ -56,6 +56,41 @@ def make_env(
 	return env
 
 
+def make_feat_env(
+		domain_name,
+		task_name,
+		seed=0,
+		episode_length=1000,
+		frame_stack=3,
+		action_repeat=4,
+		image_size=100,
+		mode='train',
+		intensity=0.
+	):
+	"""Make environment for experiments"""
+	assert mode in {'train', 'color_easy', 'color_hard', 'video_easy', 'video_hard', 'distracting_cs'}, \
+		f'specified mode "{mode}" is not supported'
+
+	paths = []
+	env = dmc2gym.make(
+		domain_name=domain_name,
+		task_name=task_name,
+		seed=seed,
+		visualize_reward=False,
+		from_pixels=False,
+		height=image_size,
+		width=image_size,
+		episode_length=episode_length,
+		frame_skip=action_repeat,
+		is_distracting_cs=False,
+		distracting_cs_intensity=intensity,
+		background_dataset_paths=paths
+	)
+	env = FrameStack(env, frame_stack)
+
+	return env
+
+
 class ColorWrapper(gym.Wrapper):
 	"""Wrapper for the color experiments"""
 	def __init__(self, env, mode, seed=None):

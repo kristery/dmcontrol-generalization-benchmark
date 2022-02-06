@@ -87,6 +87,76 @@ def prefill_memory(obses, capacity, obs_shape):
 		obses.append(frame)
 	return obses
 
+def prefill_memory_feat(obses, capacity, obs_shape):
+        l = obs_shape[0]
+        for _ in range(capacity):
+                frame = np.ones((l,), dtype=np.uint8)
+                obses.append(frame)
+        return obses
+
+
+
+class ReplayFeatBuffer(object):
+	"""Buffer to store environment transitions"""
+	def __init__(self, obs_shape, action_shape, capacity, batch_size, prefill=True):
+		self.capacity = capacity
+		self.batch_size = batch_size
+
+		self._obses = []
+		if prefill:
+			self._obses = prefill_memory_feat(self._obses, capacity, obs_shape)
+		self.actions = np.empty((capacity, *action_shape), dtype=np.float32)
+		self.rewards = np.empty((capacity, 1), dtype=np.float32)
+		self.not_dones = np.empty((capacity, 1), dtype=np.float32)
+
+		self.idx = 0
+		self.full = False
+
+	def add(self, obs, action, reward, next_obs, done):
+		obses = (obs, next_obs)
+		if self.idx >= len(self._obses):
+			self._obses.append(obses)
+		else:
+			self._obses[self.idx] = (obses)
+		np.copyto(self.actions[self.idx], action)
+		np.copyto(self.rewards[self.idx], reward)
+		np.copyto(self.not_dones[self.idx], not done)
+
+		self.idx = (self.idx + 1) % self.capacity
+		self.full = self.full or self.idx == 0
+
+	def _get_idxs(self, n=None):
+		if n is None:
+			n = self.batch_size
+		return np.random.randint(
+			0, self.capacity if self.full else self.idx, size=n
+		)
+
+	def _encode_obses(self, idxs):
+		obses, next_obses = [], []
+		for i in idxs:
+			obs, next_obs = self._obses[i]
+			obses.append(np.array(obs, copy=False))
+			next_obses.append(np.array(next_obs, copy=False))
+		return np.array(obses), np.array(next_obses)
+
+	def sample(self, n=None):
+		idxs = self._get_idxs(n)
+
+		obs, next_obs = self._encode_obses(idxs)
+		obs = torch.as_tensor(obs).cuda().float()
+		next_obs = torch.as_tensor(next_obs).cuda().float()
+		actions = torch.as_tensor(self.actions[idxs]).cuda()
+		rewards = torch.as_tensor(self.rewards[idxs]).cuda()
+		not_dones = torch.as_tensor(self.not_dones[idxs]).cuda()
+
+		obs = augmentations.random_crop(obs)
+		next_obs = augmentations.random_crop(next_obs)
+
+		return obs, actions, rewards, next_obs, not_dones
+
+
+
 
 class ReplayBuffer(object):
 	"""Buffer to store environment transitions"""

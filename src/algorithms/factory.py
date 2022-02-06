@@ -5,6 +5,8 @@ from algorithms.pad import PAD
 from algorithms.soda import SODA
 from algorithms.drq import DrQ
 from algorithms.svea import SVEA
+from algorithms.sac_exp import SAC_EXP
+from algorithms.sac_feat import SAC_FEAT
 
 algorithm = {
 	'sac': SAC,
@@ -13,7 +15,9 @@ algorithm = {
 	'pad': PAD,
 	'soda': SODA,
 	'drq': DrQ,
-	'svea': SVEA
+	'svea': SVEA,
+        'sac_exp': SAC_EXP,
+        'sac_feat': SAC_FEAT
 }
 
 
