@@ -61,7 +61,10 @@ def main(args):
 
 
         # Create working directory
-        work_dir = os.path.join(args.log_dir, args.domain_name+'_'+args.task_name+'_feat', args.algorithm, str(args.seed))
+        if args.algorithm == 'sac_feat_exp':
+            work_dir = os.path.join(args.log_dir, args.domain_name+'_'+args.task_name+'_feat', args.algorithm+f'_{args.iters}', str(args.seed))
+        else:
+            work_dir = os.path.join(args.log_dir, args.domain_name+'_'+args.task_name+'_feat', args.algorithm, str(args.seed))
         print('Working directory:', work_dir)
         assert not os.path.exists(os.path.join(work_dir, 'train.log')), 'specified working directory already exists'
         utils.make_dir(work_dir)

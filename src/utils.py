@@ -150,8 +150,8 @@ class ReplayFeatBuffer(object):
 		rewards = torch.as_tensor(self.rewards[idxs]).cuda()
 		not_dones = torch.as_tensor(self.not_dones[idxs]).cuda()
 
-		obs = augmentations.random_crop(obs)
-		next_obs = augmentations.random_crop(next_obs)
+		#obs = augmentations.random_crop(obs)
+		#next_obs = augmentations.random_crop(next_obs)
 
 		return obs, actions, rewards, next_obs, not_dones
 

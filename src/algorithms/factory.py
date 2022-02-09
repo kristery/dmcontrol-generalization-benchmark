@@ -7,6 +7,7 @@ from algorithms.drq import DrQ
 from algorithms.svea import SVEA
 from algorithms.sac_exp import SAC_EXP
 from algorithms.sac_feat import SAC_FEAT
+from algorithms.sac_feat_exp import SAC_FEAT_EXP
 
 algorithm = {
 	'sac': SAC,
@@ -17,7 +18,8 @@ algorithm = {
 	'drq': DrQ,
 	'svea': SVEA,
         'sac_exp': SAC_EXP,
-        'sac_feat': SAC_FEAT
+        'sac_feat': SAC_FEAT,
+        'sac_feat_exp': SAC_FEAT_EXP
 }
 
 
