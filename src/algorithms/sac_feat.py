@@ -29,7 +29,7 @@ class SAC_FEAT(object):
                         m.RLProjection(head_cnn.out_shape, args.projection_dim)
                 )
                 """
-
+                self.iters = args.iters
                 actor_encoder = m.featEncoder( 
                             m.RLProjection(obs_shape, args.projection_dim)
                 )
@@ -110,31 +110,33 @@ class SAC_FEAT(object):
                 self.critic_optimizer.step()
 
         def update_actor_and_alpha(self, obs, L=None, step=None, update_alpha=True):
-                _, pi, log_pi, log_std = self.actor(obs, detach=True)
-                actor_Q1, actor_Q2 = self.critic(obs, pi, detach=True)
+                
+                for i in range(self.iters):
+                    _, pi, log_pi, log_std = self.actor(obs, detach=True)
+                    actor_Q1, actor_Q2 = self.critic(obs, pi, detach=True)
 
-                actor_Q = torch.min(actor_Q1, actor_Q2)
-                actor_loss = (self.alpha.detach() * log_pi - actor_Q).mean()
+                    actor_Q = torch.min(actor_Q1, actor_Q2)
+                    actor_loss = (self.alpha.detach() * log_pi - actor_Q).mean()
 
-                if L is not None:
-                        L.log('train_actor/loss', actor_loss, step)
-                        entropy = 0.5 * log_std.shape[1] * (1.0 + np.log(2 * np.pi)
-                                                                                                ) + log_std.sum(dim=-1)
+                    if L is not None and i == self.iters-1:
+                            L.log('train_actor/loss', actor_loss, step)
+                            entropy = 0.5 * log_std.shape[1] * (1.0 + np.log(2 * np.pi)
+                                                                                                    ) + log_std.sum(dim=-1)
 
-                self.actor_optimizer.zero_grad()
-                actor_loss.backward()
-                self.actor_optimizer.step()
+                    self.actor_optimizer.zero_grad()
+                    actor_loss.backward()
+                    self.actor_optimizer.step()
 
-                if update_alpha:
-                        self.log_alpha_optimizer.zero_grad()
-                        alpha_loss = (self.alpha * (-log_pi - self.target_entropy).detach()).mean()
+                    if update_alpha and i == self.iters-1:
+                            self.log_alpha_optimizer.zero_grad()
+                            alpha_loss = (self.alpha * (-log_pi - self.target_entropy).detach()).mean()
 
-                        if L is not None:
-                                L.log('train_alpha/loss', alpha_loss, step)
-                                L.log('train_alpha/value', self.alpha, step)
+                            if L is not None:
+                                    L.log('train_alpha/loss', alpha_loss, step)
+                                    L.log('train_alpha/value', self.alpha, step)
 
-                        alpha_loss.backward()
-                        self.log_alpha_optimizer.step()
+                            alpha_loss.backward()
+                            self.log_alpha_optimizer.step()
 
         def soft_update_critic_target(self):
                 utils.soft_update_params(

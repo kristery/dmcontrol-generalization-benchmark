@@ -95,6 +95,12 @@ class SAC_FEAT_EXP(object):
                         mu, _, _, _ = self.actor(_obs, compute_pi=False, compute_log_pi=False)
                 return mu.cpu().data.numpy().flatten()
 
+        def exp_select_action(self, obs):
+                _obs = self._obs_to_input(obs)
+                with torch.no_grad():
+                        mu, _, _, _ = self.exp_actor(_obs, compute_pi=False, compute_log_pi=False)
+                return mu.cpu().data.numpy().flatten()
+
         def sample_action(self, obs):
                 _obs = self._obs_to_input(obs)
                 with torch.no_grad():

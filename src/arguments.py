@@ -72,7 +72,7 @@ def parse_args():
 
 
         # sac exp
-        parser.add_argument('--iters', default=20, type=int)
+        parser.add_argument('--iters', default=1, type=int)
 
         args = parser.parse_args()
 
