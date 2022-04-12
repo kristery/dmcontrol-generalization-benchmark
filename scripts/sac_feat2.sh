@@ -6,7 +6,7 @@ do
        domain=cheetah
        task=run
        cuda=0
-       CUDA_VISIBLE_DEVICES=${cuda} python src/feat_train.py --algorithm sac_feat_exp --domain_name $domain --task_name $task --seed $seed --iters $iters &
+       CUDA_VISIBLE_DEVICES=${cuda} python src/feat_train.py --algorithm sac_bc --domain_name $domain --task_name $task --seed $seed --iters $iters &
        CUDA_VISIBLE_DEVICES=${cuda} python src/feat_train.py --algorithm sac_feat --domain_name $domain --task_name $task --seed $seed 
     done
 
@@ -15,7 +15,7 @@ do
        domain=quadruped
        task=run
        cuda=0
-       CUDA_VISIBLE_DEVICES=${cuda} python src/feat_train.py --algorithm sac_feat_exp --domain_name ${domain} --task_name ${task} --seed $seed --iters $iters &
+       CUDA_VISIBLE_DEVICES=${cuda} python src/feat_train.py --algorithm sac_bc --domain_name ${domain} --task_name ${task} --seed $seed --iters $iters &
        CUDA_VISIBLE_DEVICES=${cuda} python src/feat_train.py --algorithm sac_feat --domain_name ${domain} --task_name ${task} --seed $seed
     done
 
