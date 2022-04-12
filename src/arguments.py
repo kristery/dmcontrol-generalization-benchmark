@@ -10,7 +10,7 @@ def parse_args():
         parser.add_argument('--task_name', default='walk')
         parser.add_argument('--frame_stack', default=3, type=int)
         parser.add_argument('--action_repeat', default=4, type=int)
-        parser.add_argument('--episode_length', default=1000, type=int)
+        parser.add_argument('--episode_length', default=800, type=int)
         parser.add_argument('--eval_mode', default='color_hard', type=str)
         
         # agent
@@ -73,10 +73,11 @@ def parse_args():
 
         # sac exp
         parser.add_argument('--iters', default=1, type=int)
+        parser.add_argument('--lam', default=2.5, type=float)
 
         args = parser.parse_args()
 
-        assert args.algorithm in {'sac', 'rad', 'curl', 'pad', 'soda', 'drq', 'svea', 'sac_exp', 'sac_feat', 'sac_feat_exp'}, f'specified algorithm "{args.algorithm}" is not supported'
+        assert args.algorithm in {'sac', 'rad', 'curl', 'pad', 'soda', 'drq', 'svea', 'sac_exp', 'sac_feat', 'sac_feat_exp', 'sac_bc', 'sac_rev'}, f'specified algorithm "{args.algorithm}" is not supported'
 
         assert args.eval_mode in {'train', 'color_easy', 'color_hard', 'video_easy', 'video_hard', 'distracting_cs', 'none'}, f'specified mode "{args.eval_mode}" is not supported'
         assert args.seed is not None, 'must provide seed for experiment'

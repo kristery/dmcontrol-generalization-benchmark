@@ -81,8 +81,8 @@ def main(args):
 
 
         # Create working directory
-        if args.algorithm in ['sac_feat_exp', 'sac_feat']:
-            work_dir = os.path.join(args.log_dir, args.domain_name+'_'+args.task_name+'_feat', args.algorithm+f'_{args.iters}', str(args.seed))
+        if args.algorithm in ['sac_feat_exp', 'sac_feat', 'sac_bc', 'sac_rev']:
+            work_dir = os.path.join(args.log_dir, args.domain_name+'_'+args.task_name+'_feat', args.algorithm+f'_{args.iters}'+f'_{args.lam}', str(args.seed))
         else:
             work_dir = os.path.join(args.log_dir, args.domain_name+'_'+args.task_name+'_feat', args.algorithm, str(args.seed))
         print('Working directory:', work_dir)
@@ -130,7 +130,7 @@ def main(args):
                                 evaluate(env, agent, args.eval_episodes, L, step)
                                 if test_env is not None:
                                         evaluate(test_env, agent, args.eval_episodes, L, step, test_env=True)
-                                        if args.algorithm == 'sac_feat_exp':
+                                        if args.algorithm in ['sac_feat_exp', 'sac_bc', 'sac_rev']:
                                             exp_evaluate(test_env, agent, args.eval_episodes, L, step, test_env=True)
                                 L.dump(step)
 
