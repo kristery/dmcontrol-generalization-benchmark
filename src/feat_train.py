@@ -130,7 +130,7 @@ def main(args):
                                 evaluate(env, agent, args.eval_episodes, L, step)
                                 if test_env is not None:
                                         evaluate(test_env, agent, args.eval_episodes, L, step, test_env=True)
-                                        if args.algorithm in ['sac_feat_exp', 'sac_bc', 'sac_rev']:
+                                        if args.algorithm in ['sac_feat_exp', 'sac_bc', 'sac_rev', 'sac_nsfp']:
                                             exp_evaluate(test_env, agent, args.eval_episodes, L, step, test_env=True)
                                 L.dump(step)
 

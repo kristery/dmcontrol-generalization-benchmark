@@ -1,4 +1,4 @@
-# method description: offline reinforcement learning with new samples
+# method description: use online policy to sample and offline to estimate actions for update
 
 import numpy as np
 import torch
@@ -9,7 +9,7 @@ import utils
 import algorithms.modules as m
 
 
-class SAC_REV(object):
+class SAC_NSFP(object):
         def __init__(self, obs_shape, action_shape, args):
                 self.discount = args.discount
                 self.critic_tau = args.critic_tau
@@ -107,8 +107,8 @@ class SAC_REV(object):
         def sample_action(self, obs):
                 _obs = self._obs_to_input(obs)
                 with torch.no_grad():
-                        #mu, pi, _, _ = self.actor(_obs, compute_log_pi=False)
-                        mu, pi, _, _ = self.exp_actor(_obs, compute_log_pi=False) 
+                        mu, pi, _, _ = self.actor(_obs, compute_log_pi=False)
+                        #mu, pi, _, _ = self.exp_actor(_obs, compute_log_pi=False) 
                 return pi.cpu().data.numpy().flatten()
 
         def update_critic(self, obs, action, reward, next_obs, not_done, L=None, step=None):

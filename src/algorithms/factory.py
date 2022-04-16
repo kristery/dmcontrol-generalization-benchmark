@@ -10,6 +10,7 @@ from algorithms.sac_feat import SAC_FEAT
 from algorithms.sac_feat_exp import SAC_FEAT_EXP
 from algorithms.sac_bc import SAC_BC
 from algorithms.sac_rev import SAC_REV
+from algorithms.sac_nsfp import SAC_NSFP
 
 algorithm = {
 	'sac': SAC,
@@ -24,6 +25,7 @@ algorithm = {
         'sac_feat_exp': SAC_FEAT_EXP,
         'sac_bc': SAC_BC,
         'sac_rev': SAC_REV
+        'sac_nsfp': SAC_NSFP
 }
 
 
