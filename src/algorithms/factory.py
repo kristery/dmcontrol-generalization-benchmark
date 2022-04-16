@@ -24,7 +24,7 @@ algorithm = {
         'sac_feat': SAC_FEAT,
         'sac_feat_exp': SAC_FEAT_EXP,
         'sac_bc': SAC_BC,
-        'sac_rev': SAC_REV
+        'sac_rev': SAC_REV,
         'sac_nsfp': SAC_NSFP
 }
 
