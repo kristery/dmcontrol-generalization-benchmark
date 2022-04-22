@@ -1,12 +1,14 @@
-import torch
-import numpy as np
-import os
 import glob
 import json
+import os
 import random
-import augmentations
 import subprocess
 from datetime import datetime
+
+import numpy as np
+import torch
+
+import augmentations
 
 
 class eval_mode(object):
@@ -46,16 +48,18 @@ def set_seed_everywhere(seed):
 
 def write_info(args, fp):
     data = {
-        'timestamp': str(datetime.now()),
-        'git': subprocess.check_output(["git", "describe", "--always"]).strip().decode(),
-        'args': vars(args)
+        "timestamp": str(datetime.now()),
+        "git": subprocess.check_output(["git", "describe", "--always"])
+        .strip()
+        .decode(),
+        "args": vars(args),
     }
-    with open(fp, 'w') as f:
-        json.dump(data, f, indent=4, separators=(',', ': '))
+    with open(fp, "w") as f:
+        json.dump(data, f, indent=4, separators=(",", ": "))
 
 
 def load_config(key=None):
-    path = os.path.join('setup', 'config.cfg')
+    path = os.path.join("setup", "config.cfg")
     with open(path) as f:
         data = json.load(f)
     if key is not None:
@@ -71,8 +75,8 @@ def make_dir(dir_path):
     return dir_path
 
 
-def listdir(dir_path, filetype='jpg', sort=True):
-    fpath = os.path.join(dir_path, f'*.{filetype}')
+def listdir(dir_path, filetype="jpg", sort=True):
+    fpath = os.path.join(dir_path, f"*.{filetype}")
     fpaths = glob.glob(fpath, recursive=True)
     if sort:
         return sorted(fpaths)
@@ -81,24 +85,27 @@ def listdir(dir_path, filetype='jpg', sort=True):
 
 def prefill_memory(obses, capacity, obs_shape):
     """Reserves memory for replay buffer"""
-    c,h,w = obs_shape
+    c, h, w = obs_shape
     for _ in range(capacity):
-        frame = np.ones((3,h,w), dtype=np.uint8)
+        frame = np.ones((3, h, w), dtype=np.uint8)
         obses.append(frame)
     return obses
 
-def prefill_memory_feat(obses, capacity, obs_shape):
-        l = obs_shape[0]
-        for _ in range(capacity):
-                frame = np.ones((l,), dtype=np.uint8)
-                obses.append(frame)
-        return obses
 
+def prefill_memory_feat(obses, capacity, obs_shape):
+    l = obs_shape[0]
+    for _ in range(capacity):
+        frame = np.ones((l,), dtype=np.uint8)
+        obses.append(frame)
+    return obses
 
 
 class ReplayFeatBuffer(object):
     """Buffer to store environment transitions"""
-    def __init__(self, obs_shape, action_shape, capacity, batch_size, prefill=True):
+
+    def __init__(
+        self, obs_shape, action_shape, capacity, batch_size, prefill=True
+    ):
         self.capacity = capacity
         self.batch_size = batch_size
 
@@ -117,7 +124,7 @@ class ReplayFeatBuffer(object):
         if self.idx >= len(self._obses):
             self._obses.append(obses)
         else:
-            self._obses[self.idx] = (obses)
+            self._obses[self.idx] = obses
         np.copyto(self.actions[self.idx], action)
         np.copyto(self.rewards[self.idx], reward)
         np.copyto(self.not_dones[self.idx], not done)
@@ -135,7 +142,11 @@ class ReplayFeatBuffer(object):
     def _get_latest_idxs(self, n=None, ratio=0.1):
         if n is None:
             n = self.batch_size
-        low = self.capacity * (1 - ratio) if self.full else self.idx * (1 - ratio)
+        low = (
+            self.capacity * (1 - ratio)
+            if self.full
+            else self.idx * (1 - ratio)
+        )
         high = self.capacity if self.full else self.idx
         return np.random.randint(int(low), high, size=n)
 
@@ -157,8 +168,8 @@ class ReplayFeatBuffer(object):
         rewards = torch.as_tensor(self.rewards[idxs]).cuda()
         not_dones = torch.as_tensor(self.not_dones[idxs]).cuda()
 
-        #obs = augmentations.random_crop(obs)
-        #next_obs = augmentations.random_crop(next_obs)
+        # obs = augmentations.random_crop(obs)
+        # next_obs = augmentations.random_crop(next_obs)
 
         return obs, actions, rewards, next_obs, not_dones
 
@@ -177,7 +188,10 @@ class ReplayFeatBuffer(object):
 
 class ReplayBuffer(object):
     """Buffer to store environment transitions"""
-    def __init__(self, obs_shape, action_shape, capacity, batch_size, prefill=True):
+
+    def __init__(
+        self, obs_shape, action_shape, capacity, batch_size, prefill=True
+    ):
         self.capacity = capacity
         self.batch_size = batch_size
 
@@ -196,7 +210,7 @@ class ReplayBuffer(object):
         if self.idx >= len(self._obses):
             self._obses.append(obses)
         else:
-            self._obses[self.idx] = (obses)
+            self._obses[self.idx] = obses
         np.copyto(self.actions[self.idx], action)
         np.copyto(self.rewards[self.idx], reward)
         np.copyto(self.not_dones[self.idx], not done)
@@ -307,10 +321,10 @@ class LazyFrames(object):
         if self.extremely_lazy:
             return len(self._frames)
         frames = self._force()
-        return frames.shape[0]//3
+        return frames.shape[0] // 3
 
     def frame(self, i):
-        return self._force()[i*3:(i+1)*3]
+        return self._force()[i * 3 : (i + 1) * 3]
 
 
 def count_parameters(net, as_int=False):
@@ -318,4 +332,4 @@ def count_parameters(net, as_int=False):
     count = sum(p.numel() for p in net.parameters())
     if as_int:
         return count
-    return f'{count:,}'
+    return f"{count:,}"
