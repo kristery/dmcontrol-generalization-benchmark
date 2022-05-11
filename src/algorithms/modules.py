@@ -228,6 +228,30 @@ class Actor(nn.Module):
                 return mu, pi, log_pi, log_std
 
 
+        def log_probs(self, states, actions, detach=False):
+                x = self.encoder(states, detach)
+                mu, log_std = self.mlp(x).chunk(2, dim=-1)
+                log_std = torch.tanh(log_std)
+                log_std = self.log_std_min + 0.5 * (
+                        self.log_std_max - self.log_std_min
+                ) * (log_std + 1)
+
+                # if compute_pi:
+                #         std = log_std.exp()
+                #         noise = torch.randn_like(mu)
+                #         pi = mu + noise * std
+                # else:
+                #         pi = None
+                #         entropy = None
+
+                noise = actions - mu
+                log_pi = gaussian_logprob(noise, log_std)
+
+                mu, pi, log_pi = squash(mu, action, log_pi)
+
+                return log_pi
+
+
 class QFunction(nn.Module):
         def __init__(self, obs_dim, action_dim, hidden_dim):
                 super().__init__()

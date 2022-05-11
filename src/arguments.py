@@ -78,6 +78,9 @@ def parse_args():
     # sac offline exp
     parser.add_argument("--full_sampling", action="store_true")
 
+    # sac fisher
+    parser.add_argument("--f_reg", default=1.0, type=float)
+
     args = parser.parse_args()
 
     assert args.algorithm in {
@@ -95,6 +98,7 @@ def parse_args():
         "sac_rev",
         "sac_nsfp",
         "sac_offline_exp",
+        "sac_fisher"
     }, f'specified algorithm "{args.algorithm}" is not supported'
 
     assert args.eval_mode in {

@@ -98,7 +98,10 @@ conda env create -f setup/conda.yaml
 conda activate dmc
 sh setup/install_envs.sh
 ```
-
+Probably also install the later pytorch package
+```
+conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
+```
 
 ## Datasets
 Part of this repository relies on external datasets. SODA uses the [Places](http://places2.csail.mit.edu/download.html) dataset for data augmentation, which can be downloaded by running

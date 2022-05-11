@@ -12,6 +12,7 @@ from algorithms.sac_offline_exp import SAC_OFFLINE_EXP
 from algorithms.sac_rev import SAC_REV
 from algorithms.soda import SODA
 from algorithms.svea import SVEA
+from algorithms.sac_fisher import SAC_FISHER
 
 algorithm = {
     "sac": SAC,
@@ -28,6 +29,7 @@ algorithm = {
     "sac_rev": SAC_REV,
     "sac_nsfp": SAC_NSFP,
     "sac_offline_exp": SAC_OFFLINE_EXP,
+    "sac_fisher": SAC_FISHER
 }
 
 
