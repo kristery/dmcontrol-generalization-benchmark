@@ -150,13 +150,15 @@ class SAC_FISHER(object):
 
         with torch.no_grad():
             _, policy_action, log_pi, _ = self.actor(next_obs)
-            target_Q1, target_Q2 = self.critic_target(next_obs, policy_action)
+            # target_Q1, target_Q2 = self.critic_target(next_obs, policy_action)
+            target_Q1, target_Q2 = self.dist_critic(next_obs, policy_action, target=True)
             target_V = (
                 torch.min(target_Q1, target_Q2) - self.alpha.detach() * log_pi
             )
             target_Q = reward + (not_done * self.discount * target_V)
 
-        current_Q1, current_Q2 = self.critic(obs, action)
+        # current_Q1, current_Q2 = self.critic(obs, action)
+        current_Q1, current_Q2 = self.dist_critic(obs, action, stop_gradient=True)
         critic_loss = F.mse_loss(current_Q1, target_Q) + F.mse_loss(
             current_Q2, target_Q
         )
@@ -216,6 +218,9 @@ class SAC_FISHER(object):
         )
 
     def update(self, replay_buffer, L, step):
+        # update behavior policy
+        self.bp = deepcopy(self.actor)
+
         obs, action, reward, next_obs, not_done = replay_buffer.sample()
 
         self.update_critic(obs, action, reward, next_obs, not_done, L, step)

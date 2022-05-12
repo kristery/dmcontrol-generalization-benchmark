@@ -107,6 +107,14 @@ def main(args):
             + f"_{args.full_sampling}",
             str(args.seed),
         )
+    elif args.algorithm in ["sac_fisher"]:
+         work_dir = os.path.join(
+            args.log_dir,
+            args.domain_name + "_" + args.task_name + "_feat",
+            args.algorithm
+            + f"_{args.f_reg}",
+            str(args.seed),
+        )   
     else:
         work_dir = os.path.join(
             args.log_dir,
