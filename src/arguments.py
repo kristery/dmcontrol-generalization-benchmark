@@ -6,6 +6,8 @@ import numpy as np
 def parse_args():
     parser = argparse.ArgumentParser()
 
+    parser.add_argument("--allow_ow", action="store_true", help="overwrite existing folder")
+
     # environment
     parser.add_argument("--domain_name", default="walker")
     parser.add_argument("--task_name", default="walk")

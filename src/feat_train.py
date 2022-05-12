@@ -115,9 +115,12 @@ def main(args):
             str(args.seed),
         )
     print("Working directory:", work_dir)
-    assert not os.path.exists(
-        os.path.join(work_dir, "train.log")
-    ), "specified working directory already exists"
+    
+    if not args.allow_ow:
+        assert not os.path.exists(
+            os.path.join(work_dir, "train.log")
+        ), "specified working directory already exists"
+    
     utils.make_dir(work_dir)
     model_dir = utils.make_dir(os.path.join(work_dir, "model"))
     # video_dir = utils.make_dir(os.path.join(work_dir, 'video'))
