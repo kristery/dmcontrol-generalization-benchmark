@@ -87,7 +87,6 @@ def main(args):
     # Create working directory
     if args.algorithm in [
         "sac_feat_exp",
-        "sac_feat",
         "sac_bc",
         "sac_rev",
     ]:
@@ -95,6 +94,13 @@ def main(args):
             args.log_dir,
             args.domain_name + "_" + args.task_name + "_feat",
             args.algorithm + f"_{args.iters}" + f"_{args.lam}",
+            str(args.seed),
+        )
+    elif args.algorithm in ["sac_feat"]:
+        work_dir = os.path.join(
+            args.log_dir,
+            args.domain_name + "_" + args.task_name + "_feat",
+            args.algorithm,
             str(args.seed),
         )
     elif args.algorithm in ["sac_offline_exp"]:
