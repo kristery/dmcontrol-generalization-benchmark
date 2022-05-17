@@ -6,7 +6,9 @@ import numpy as np
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--allow_ow", action="store_true", help="overwrite existing folder")
+    parser.add_argument(
+        "--allow_ow", action="store_true", help="overwrite existing folder"
+    )
     parser.add_argument("--exp_name", default="", type=str)
 
     # environment
@@ -84,8 +86,25 @@ def parse_args():
     # sac fisher
     parser.add_argument("--f_reg", default=1.0, type=float)
     parser.add_argument("--tau_ratio", default=1.0, type=float)
-    parser.add_argument("--value_w", default=1.0, type=float, help="It should be less than or equal to 1.0")
-    parser.add_argument("--ov_actorupdate", action="store_true", help="Use the original value function for actor update")
+    parser.add_argument(
+        "--value_w",
+        default=1.0,
+        type=float,
+        help="It should be less than or equal to 1.0",
+    )
+    parser.add_argument(
+        "--ov_actorupdate",
+        action="store_true",
+        help="Use the original value function for actor update",
+    )
+
+    # visualization
+    parser.add_argument(
+        "--checkpoint", type=str, help="pt file for visualization"
+    )
+    parser.add_argument(
+        "--video_name", type=str, help="file name of the output video"
+    )
 
     args = parser.parse_args()
 
@@ -104,7 +123,7 @@ def parse_args():
         "sac_rev",
         "sac_nsfp",
         "sac_offline_exp",
-        "sac_fisher"
+        "sac_fisher",
     }, f'specified algorithm "{args.algorithm}" is not supported'
 
     assert args.eval_mode in {
