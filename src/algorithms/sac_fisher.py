@@ -18,21 +18,24 @@ class SAC_FISHER(object):
         self.actor_update_freq = args.actor_update_freq
         self.critic_target_update_freq = args.critic_target_update_freq
         self.f_reg = args.f_reg
+        self.tau_ratio = args.tau_ratio
+        self.value_w = args.value_w
+        self.ov_actorupdate = args.ov_actorupdate
 
         """
-                shared_cnn = m.SharedCNN(obs_shape, args.num_shared_layers, args.num_filters).cuda()
-                head_cnn = m.HeadCNN(shared_cnn.out_shape, args.num_head_layers, args.num_filters).cuda()
-                actor_encoder = m.Encoder(
-                        shared_cnn,
-                        head_cnn,
-                        m.RLProjection(head_cnn.out_shape, args.projection_dim)
-                )
-                critic_encoder = m.Encoder(
-                        shared_cnn,
-                        head_cnn,
-                        m.RLProjection(head_cnn.out_shape, args.projection_dim)
-                )
-                """
+        shared_cnn = m.SharedCNN(obs_shape, args.num_shared_layers, args.num_filters).cuda()
+        head_cnn = m.HeadCNN(shared_cnn.out_shape, args.num_head_layers, args.num_filters).cuda()
+        actor_encoder = m.Encoder(
+                shared_cnn,
+                head_cnn,
+                m.RLProjection(head_cnn.out_shape, args.projection_dim)
+        )
+        critic_encoder = m.Encoder(
+                shared_cnn,
+                head_cnn,
+                m.RLProjection(head_cnn.out_shape, args.projection_dim)
+        )
+        """
         self.iters = args.iters
         actor_encoder = m.featEncoder(
             m.RLProjection(obs_shape, args.projection_dim)
@@ -96,7 +99,7 @@ class SAC_FISHER(object):
         if stop_gradient:
             # log_probs = tf.stop_gradient(log_probs)
             log_probs = log_probs.detach()
-        return (q1 + log_probs, q2 + log_probs)
+        return (q1 + log_probs * self.value_w, q2 + log_probs * self.value_w)
 
     def grad_penalty(self, states, actions):
         grad1, grad2 = self.critic.get_grad(states, actions)
@@ -177,9 +180,10 @@ class SAC_FISHER(object):
 
         for i in range(self.iters):
             _, pi, log_pi, log_std = self.actor(obs, detach=True)
-            # actor_Q1, actor_Q2 = self.critic(obs, pi, detach=True)
-
-            actor_Q1, actor_Q2 = self.dist_critic(obs, pi)
+            if self.ov_actorupdate:
+                actor_Q1, actor_Q2 = self.critic(obs, pi, detach=True)
+            else:
+                actor_Q1, actor_Q2 = self.dist_critic(obs, pi)
             actor_Q = torch.min(actor_Q1, actor_Q2)
             actor_loss = (self.alpha.detach() * log_pi - actor_Q).mean()
 
@@ -219,7 +223,7 @@ class SAC_FISHER(object):
 
     def update(self, replay_buffer, L, step):
         # update behavior policy
-        self.bp = deepcopy(self.actor)
+        utils.soft_update_params(self.actor, self.bp, self.critic_tau * self.tau_ratio)
 
         obs, action, reward, next_obs, not_done = replay_buffer.sample()
 

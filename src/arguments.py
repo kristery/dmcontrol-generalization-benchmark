@@ -7,6 +7,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--allow_ow", action="store_true", help="overwrite existing folder")
+    parser.add_argument("--exp_name", default="", type=str)
 
     # environment
     parser.add_argument("--domain_name", default="walker")
@@ -82,6 +83,9 @@ def parse_args():
 
     # sac fisher
     parser.add_argument("--f_reg", default=1.0, type=float)
+    parser.add_argument("--tau_ratio", default=1.0, type=float)
+    parser.add_argument("--value_w", default=1.0, type=float, help="It should be less than or equal to 1.0")
+    parser.add_argument("--ov_actorupdate", action="store_true", help="Use the original value function for actor update")
 
     args = parser.parse_args()
 

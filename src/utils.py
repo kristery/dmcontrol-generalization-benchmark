@@ -333,3 +333,36 @@ def count_parameters(net, as_int=False):
     if as_int:
         return count
     return f"{count:,}"
+
+
+
+def create_work_dir(args):
+    if args.exp_name != "":
+        exp_tag = f"_{args.exp_name}"
+    else:
+        exp_tag = f""
+
+    if args.algorithm in [
+        "sac_feat_exp",
+        "sac_bc",
+        "sac_rev",
+    ]:
+        tag = args.algorithm + f"_{args.iters}" + f"_{args.lam}"
+    elif args.algorithm in ["sac_offline_exp"]:
+        tag = args.algorithm + f"_{args.iters}" + f"_{args.lam}" + f"_{args.full_sampling}"
+    elif args.algorithm in ["sac_fisher"]:
+        add_tag = "_ovau" if args.ov_actorupdate else ""
+        tag = args.algorithm + f"_freg{args.f_reg}" + f"_tauratio{args.tau_ratio}" + f"_vw{args.value_w}" + f"{add_tag}"
+    else:
+        tag = args.algorithm
+
+    tag = tag + exp_tag
+
+    work_dir = os.path.join(
+        args.log_dir,
+        args.domain_name + "_" + args.task_name + "_feat",
+        tag,
+        str(args.seed),
+    )
+
+    return work_dir

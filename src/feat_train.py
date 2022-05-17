@@ -85,49 +85,7 @@ def main(args):
     )
 
     # Create working directory
-    if args.algorithm in [
-        "sac_feat_exp",
-        "sac_bc",
-        "sac_rev",
-    ]:
-        work_dir = os.path.join(
-            args.log_dir,
-            args.domain_name + "_" + args.task_name + "_feat",
-            args.algorithm + f"_{args.iters}" + f"_{args.lam}",
-            str(args.seed),
-        )
-    elif args.algorithm in ["sac_feat"]:
-        work_dir = os.path.join(
-            args.log_dir,
-            args.domain_name + "_" + args.task_name + "_feat",
-            args.algorithm,
-            str(args.seed),
-        )
-    elif args.algorithm in ["sac_offline_exp"]:
-        work_dir = os.path.join(
-            args.log_dir,
-            args.domain_name + "_" + args.task_name + "_feat",
-            args.algorithm
-            + f"_{args.iters}"
-            + f"_{args.lam}"
-            + f"_{args.full_sampling}",
-            str(args.seed),
-        )
-    elif args.algorithm in ["sac_fisher"]:
-         work_dir = os.path.join(
-            args.log_dir,
-            args.domain_name + "_" + args.task_name + "_feat",
-            args.algorithm
-            + f"_{args.f_reg}",
-            str(args.seed),
-        )   
-    else:
-        work_dir = os.path.join(
-            args.log_dir,
-            args.domain_name + "_" + args.task_name + "_feat",
-            args.algorithm,
-            str(args.seed),
-        )
+    work_dir = utils.create_work_dir(args)
     print("Working directory:", work_dir)
     
     if not args.allow_ow:
